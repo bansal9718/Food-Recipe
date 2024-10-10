@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api/v1", // Your backend base URL
+  baseURL: "https://food-recipe-1-efz0.onrender.com/api/v1", // Your backend base URL
 });
 
 axiosInstance.interceptors.request.use(

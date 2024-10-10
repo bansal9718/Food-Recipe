@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://food-recipe-2-vi9a.onrender.com/", // Replace with your client origin
+    origin: "https://food-recipe-2-vi9a.onrender.com", // Replace with your client origin
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
   })

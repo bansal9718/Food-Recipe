@@ -9,11 +9,13 @@ const cors = require("cors");
 
 app.use(express.json());
 
-app.use(cors({
-  origin: '*', // Replace with your client origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Custom-Header']
-}));
+app.use(
+  cors({
+    origin: "https://food-recipe-2-vi9a.onrender.com/", // Replace with your client origin
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
+  })
+);
 //routes mounting
 
 app.use("/api/v1/user", authRoutes);

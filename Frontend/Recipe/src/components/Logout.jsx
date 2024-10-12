@@ -9,10 +9,10 @@ const Logout = () => {
     try {
       await axiosInstance.post("/user/logout"); // Send logout request
       localStorage.removeItem("token"); // Remove token from local storage
-      toast.success("Logged out Successfully"); // Success toast notification
+      toast.success("Logged out Successfully, Redirecting Back to Login Page!"); // Success toast notification
       setTimeout(() => {
         window.location.href = "/";
-      }, 2000);
+      }, 3000);
     } catch (error) {
       console.error("Some error occurred", error);
       toast.error("Logging Out"); 

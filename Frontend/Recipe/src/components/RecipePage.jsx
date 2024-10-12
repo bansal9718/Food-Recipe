@@ -82,6 +82,8 @@ const RecipePage = () => {
                 cookingTime={rec.cookingTime}
                 difficulty={rec.difficulty}
                 averageRating={rec.averageRating}
+                instructions={rec.instructions}
+                contributedBy={rec.contributor?.username || "Anonymous"}
               />
             </div>
           ))

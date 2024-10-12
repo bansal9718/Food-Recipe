@@ -14,6 +14,7 @@ const RecipeComponent = () => {
   const [success, setSuccess] = useState("");
   const [userRating, setUserRating] = useState(0);
   const [initialFavorite, setInitialFavorite] = useState(null);
+  const [addedBy, setAddedBy] = useState("Anonymous");
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -33,6 +34,12 @@ const RecipeComponent = () => {
         const response = await axiosInstance.get(`/food/single/${id}`);
         setRecipe(response.data.recipe);
 
+        const getUserById = await axiosInstance.get(
+          `/user/get/${response.data.recipe.contributedBy}`
+        );
+
+        setAddedBy(getUserById.data.user.username);
+
         const userResponse = await axiosInstance.get(`/user/get/${userId}`);
         setUser(userResponse.data.user);
 
@@ -48,7 +55,6 @@ const RecipeComponent = () => {
 
     fetchRecipeAndFavorites();
   }, [id, userId]); // Ensure id and decodedToken are the only dependencies
-  // Ensure these are the only dependencies
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -96,9 +102,17 @@ const RecipeComponent = () => {
 
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
-      <h1 className="text-4xl font-semibold text-gray-900 mb-2">
-        {recipe.name}
-      </h1>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+        <h1 className="text-4xl font-semibold text-gray-900">
+       * {recipe.name.charAt(0).toUpperCase() +
+            recipe.name.slice(1).toLowerCase()}
+        </h1>
+        <h2 className="text-lg text-gray-700">
+          <i class="ri-user-fill"></i>{" "}
+          <span className="font-semibold"> {addedBy} (Contributor)</span>
+        </h2>
+      </div>
+
       <h3 className="text-lg text-gray-600 mb-2">{recipe.description}</h3>
       <p className="text-gray-700 mb-4">
         Servings: <span className="font-medium">{recipe.servings}</span>
@@ -111,6 +125,11 @@ const RecipeComponent = () => {
           </li>
         ))}
       </ul>
+
+      <div>
+        <h3 className="text-xl font-bold text-gray-800 mb-3">Instructions</h3>
+        <p className="col-span-1 text-gray-700">{recipe.instructions}</p>
+      </div>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         Time Taken:{" "}
         <span className="font-medium">{recipe.cookingTime} min</span>

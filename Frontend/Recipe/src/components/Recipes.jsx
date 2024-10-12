@@ -11,6 +11,9 @@ const Recipes = ({
   description,
   difficulty,
   averageRating,
+  instructions,
+  contributedBy,
+  suggestions,
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-8 mb-8 hover:shadow-2xl transform transition-transform duration-300 hover:scale-105 hover:bg-gray-50">
@@ -22,7 +25,7 @@ const Recipes = ({
 
         <div className="grid grid-cols-2 gap-4 text-gray-700 mb-6">
           <p className="col-span-1">
-            <span className="font-semibold">Average Rating:</span>{" "}
+            <span className="font-semibold">Average Rating:</span>
             {averageRating ? (
               <span className="text-yellow-500">
                 {averageRating.toFixed(1)} ★
@@ -39,7 +42,7 @@ const Recipes = ({
             min
           </p>
           <p className="col-span-1">
-            <span className="font-semibold">Difficulty:</span>{" "}
+            <span className="font-semibold">Difficulty:</span>
             {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
           </p>
         </div>
@@ -54,6 +57,14 @@ const Recipes = ({
             ))}
           </ul>
         </div>
+
+        <div>
+          <h3 className="text-xl font-bold text-gray-800 mb-3">Instructions</h3>
+          <p className="col-span-1">{instructions}</p>
+        </div>
+        <p className="col-span-1">
+          <span className="font-semibold">Contributed By:</span> {contributedBy}
+        </p>
       </Link>
     </div>
   );

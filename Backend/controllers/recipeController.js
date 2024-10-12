@@ -13,6 +13,7 @@ const newRecipe = async (req, res, next) => {
     difficulty,
   } = req.body;
 
+  const userId = req.user.id;
   try {
     const recipe = await Recipe.create({
       name,
@@ -22,6 +23,7 @@ const newRecipe = async (req, res, next) => {
       instructions,
       servings,
       difficulty,
+      contributedBy: userId,
     });
 
     if (!recipe) {
@@ -54,6 +56,29 @@ const getAllRecipes = async (req, res, next) => {
     ).send(res);
   } catch (error) {
     next(error); // Pass error to the error handler middleware
+  }
+};
+
+const searchRecipesByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    // Find recipes contributed by the specified user
+    const recipes = await Recipe.find({ contributedBy: userId });
+   
+    // Check if recipes were found
+    if (recipes.length === 0) {
+      return res.status(404).json({ message: "No recipes found" });
+    }
+
+    // Send the found recipes with a 200 status code
+    return res.status(200).json(recipes);
+  } catch (error) {
+    console.error(error);
+    // Return a 500 status code for server errors
+    return res
+      .status(500)
+      .json({ message: "An error occurred while fetching recipes." });
   }
 };
 
@@ -132,11 +157,31 @@ const filterRecipe = async (req, res) => {
       matchStage.cookingTime = { $gte: parseInt(cookingTime) }; // Example: find cooking time greater than or equal to provided
     }
 
-
     const recipe = await Recipe.aggregate([
       {
         $match: matchStage,
       },
+      {
+        $lookup: {
+          from: "users",
+          let: { contributorId: { $toObjectId: "$contributedBy" } }, // Convert to ObjectId
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$_id", "$$contributorId"] },
+              },
+            },
+          ],
+          as: "contributor",
+        },
+      },
+      {
+        $unwind: {
+          path: "$contributor",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
       {
         $group: {
           _id: "$name",
@@ -148,10 +193,11 @@ const filterRecipe = async (req, res) => {
         $sort: { _id: 1 },
       },
     ]);
+
+    console.log(recipe);
     if (!recipe || recipe.length == 0) {
       return res.status(404).json({ message: "Recipe not found" });
     }
-
     return res.status(200).json({
       message: "Recipes fetched successfully",
       recipes: recipe,
@@ -244,4 +290,5 @@ module.exports = {
   rating,
   Suggestions,
   getRecipeById,
+  searchRecipesByUserId,
 };

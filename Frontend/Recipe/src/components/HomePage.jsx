@@ -12,11 +12,11 @@ const HomePage = () => {
         recipes. Deliciousness is just a tap away.
       </p>
       <div className="bg-white rounded-2xl shadow-md p-8 max-w-md w-full">
-        <span className="block mb-4 text-gray-900 text-xl font-medium text-center">
+        {/* <span className="block mb-4 text-gray-900 text-xl font-medium text-center">
           New User?
-        </span>
+        </span> */}
         <Link to="/Register">
-          <button className="w-full py-3 bg-blue-600 text-white text-lg rounded-xl hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 mb-6">
+          <button className="w-full py-3 bg-blue-600 text-white text-lg rounded-xl hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 ">
             Register
           </button>
         </Link>

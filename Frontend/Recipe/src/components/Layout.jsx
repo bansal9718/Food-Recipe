@@ -1,15 +1,17 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom"; // This will render the child routes
-import Logout from "./Logout"; 
+import Logout from "./Logout";
 
 const Layout = () => {
   const token = localStorage.getItem("token");
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow p-4 flex justify-between items-center">
+      <header className="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-50">
         <Link to="/Dashboard">
-          <h1 className="text-xl font-semibold">My Recipe App</h1>
+          <h1 className="text-2xl font-semibold">
+            <i className="ri-home-smile-fill"></i> My Recipe App
+          </h1>
         </Link>
         {token && <Logout />}
       </header>

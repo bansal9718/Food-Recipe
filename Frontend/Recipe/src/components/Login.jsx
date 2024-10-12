@@ -23,7 +23,7 @@ const Login = () => {
       if (response.status === 200) {
         const token = response.data.token;
         localStorage.setItem("token", token);
-        setSuccess("Login Successful");
+        setSuccess("Logged in Successfully");
         setTimeout(() => {
           navigate("/Dashboard");
         }, 2000);
@@ -89,7 +89,9 @@ const Login = () => {
         </div>
       </form>
 
-      {success && <p className="mt-4 text-green-600 text-center">{success}</p>}
+      {success && (
+        <p className="mt-4 text-3xl text-green-600 text-center">{success}</p>
+      )}
     </div>
   );
 };

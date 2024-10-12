@@ -9,6 +9,8 @@ import RecipePage from "./components/RecipePage";
 import FavoriteRecipes from "./components/FavoriteRecipes";
 import Logout from "./components/Logout";
 import Layout from "./components/Layout";
+import AddRecipe from "./components/AddRecipe";
+import UserRecipes from "./components/UserRecipes";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
           <Route path="/recipe" element={<RecipePage />} />
           <Route path="/favorites" element={<FavoriteRecipes />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/Add" element={<AddRecipe />} />
+          <Route path="/myRecipes" element={<UserRecipes />} />
         </Route>
         <Route path="/Register" element={<Register />} />
         <Route path="/" element={<HomePage />} />

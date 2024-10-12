@@ -1,5 +1,6 @@
 const express = require("express");
 const authController = require("../controllers/authController");
+const recipeController = require("../controllers/recipeController");
 const authenticateToken = require("../middlewares/auth");
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.route("/favorite").get(authenticateToken, authController.getFavorite);
 router
   .route("/addFavorite/:id")
   .post(authenticateToken, authController.addFavorite);
+router
+  .route("/:userId/recipes")
+  .get(authenticateToken, recipeController.searchRecipesByUserId);
 
 router
   .route("/removeFavorite/:id")

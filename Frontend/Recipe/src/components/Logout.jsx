@@ -8,14 +8,15 @@ const Logout = () => {
     e.preventDefault();
     try {
       await axiosInstance.post("/user/logout"); // Send logout request
-      localStorage.removeItem("token"); // Remove token from local storage
+      localStorage.removeItem("token");
+      localStorage.removeItem("welcomeShown"); // Reset the flag
+
       toast.success("Logged out Successfully, Redirecting Back to Login Page!"); // Success toast notification
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 3000);
+
+      window.location.href = "/";
     } catch (error) {
       console.error("Some error occurred", error);
-      toast.error("Logging Out"); 
+      toast.error("Logging Out");
     }
   };
 

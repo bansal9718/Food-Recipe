@@ -31,6 +31,13 @@ const recipeSchema = new mongoose.Schema(
       enum: ["Easy", "Medium", "Hard"],
       default: "Easy",
     },
+
+    status: {
+      type: String,
+      enum: ["veg", "non-veg"],
+      default: "NA",
+    },
+
     ratings: [
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

@@ -1,8 +1,15 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import axiosInstance from "./axiosConfig";
 import myImage from "../../assets/restaurant-fill.png";
+import { useParams, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-const AddRecipe = () => {
+const EditRecipes = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const decodedToken = jwtDecode(token);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
@@ -10,33 +17,53 @@ const AddRecipe = () => {
   const [servings, setServings] = useState("");
   const [cookingTime, setCookingTime] = useState();
   const [difficulty, setDifficulty] = useState("");
-  const [status, setStatus] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const response = await axiosInstance.get(`/food/single/${id}`);
+        const recipe = response.data.recipe;
 
+        setName(recipe.name);
+        setDescription(recipe.description);
+        setInstructions(recipe.instructions);
+        setIngredients(recipe.ingredients);
+        setServings(recipe.servings);
+        setCookingTime(recipe.cookingTime);
+        setDifficulty(recipe.difficulty);
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+        setError("Failed to fetch recipe.");
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
 
   const handleIngredientChange = (index, value) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index] = value;
-    setIngredients(updatedIngredients);
+    setIngredients((prevIngredients) => {
+      const updatedIngredients = [...prevIngredients];
+      updatedIngredients[index] = value;
+      return updatedIngredients;
+    });
   };
 
   const handleAddIngredient = () => {
-    setIngredients([...ingredients, ""]);
+    setIngredients((prevIngredients) => [...prevIngredients, ""]);
   };
 
   const handleRemoveIngredient = (index) => {
-    const updatedIngredients = ingredients.filter((_, i) => i !== index);
-    setIngredients(updatedIngredients);
+    setIngredients((prevIngredients) =>
+      prevIngredients.length > 1
+        ? prevIngredients.filter((_, i) => i !== index)
+        : prevIngredients
+    );
   };
 
   const handleRecipeSubmit = async (event) => {
     event.preventDefault();
-    if (!name) {
-      setError("Please enter a recipe name.");
-      return;
-    }
 
     const recipeData = {
       name,
@@ -44,32 +71,30 @@ const AddRecipe = () => {
       instructions,
       ingredients,
       servings,
-      status,
       cookingTime,
       difficulty:
         difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase(),
     };
 
     try {
-      const response = await axiosInstance.post("/food/create", recipeData);
+      const response = await axiosInstance.put(`/food/edit/${id}`, recipeData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-     
-      setName("");
-      setDescription("");
-      setIngredients([""]);
-      setInstructions("");
-      setServings("");
-      setCookingTime("");
-      setDifficulty("");
-      setStatus("");
-
-      setSuccess("Recipe added successfully! Redirecting...");
-      setError("");
-
-      window.location.href = "/Dashboard";
+      if (response.status === 200) {
+        setSuccess("Recipe edited successfully! Redirecting...");
+        setError("");
+        setTimeout(() => {
+          navigate(`/myRecipes/${decodedToken.id}`); // Use navigate to redirect
+        }, 2000);
+      } else {
+        throw new Error("Failed to edit recipe.");
+      }
     } catch (error) {
-      console.error("Error adding recipe", error);
-      setError("Failed to add recipe.");
+      console.error("Error editing recipe", error);
+      setError("Failed to edit recipe.");
       setSuccess("");
     }
   };
@@ -77,7 +102,7 @@ const AddRecipe = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       <span className="text-4xl font-sans font-semibold text-center text-gray-900 mb-8">
-        Enter Your Recipe
+        Edit Your Recipe
         <img
           src={myImage}
           alt="Recipe Icon"
@@ -139,7 +164,6 @@ const AddRecipe = () => {
                 onChange={(e) => handleIngredientChange(index, e.target.value)}
                 placeholder="Eg: Cheese"
                 className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
               />
               {index > 0 && (
                 <button
@@ -216,7 +240,6 @@ const AddRecipe = () => {
               value={cookingTime || ""}
               onChange={(e) => {
                 const value = Number(e.target.value);
-                // Only set servings if it's non-negative
                 if (value >= 0) {
                   setCookingTime(value);
                 }
@@ -248,38 +271,19 @@ const AddRecipe = () => {
             <option value="Hard">Hard</option>
           </select>
         </div>
-        <div>
-          <label
-            htmlFor="status-select"
-            className="block text-lg font-medium text-gray-700"
-          >
-            Status
-          </label>
-          <select
-            id="difficulty-select"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full px-4 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          >
-            <option value="">--Choose Status--</option>
-            <option value="Easy">veg</option>
-            <option value="Medium">non-veg</option>
-          </select>
-        </div>
+
+        {success && <div className="text-green-500">{success}</div>}
+        {error && <div className="text-red-500">{error}</div>}
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white mt-4 px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-700"
+          className="w-full bg-green-500 text-white px-4 py-2 mt-4 rounded hover:bg-green-600"
         >
-          Submit
+          Save Recipe
         </button>
-
-        {success && <p className="mt-4 text-green-500">{success}</p>}
-        {error && <p className="mt-4 text-red-500">{error}</p>}
       </form>
     </div>
   );
 };
 
-export default AddRecipe;
+export default EditRecipes;

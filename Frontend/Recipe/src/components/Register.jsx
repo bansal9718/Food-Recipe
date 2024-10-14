@@ -8,11 +8,13 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false); // Change to boolean
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading
 
     const userData = {
       username,
@@ -25,9 +27,7 @@ const Register = () => {
 
       setSuccess("Registration successful!");
       setError("");
-      setTimeout(() => {
-        navigate("/Login");
-      }, 2000);
+      navigate("/Login");
     } catch (error) {
       console.error("Error during registration:", error);
       setError(
@@ -35,13 +35,15 @@ const Register = () => {
           "Registration failed. Please try again."
       );
       setSuccess("");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-200 p-6">
       <h1 className="text-5xl font-semibold text-gray-900 mb-8">
-        Register <i class="ri-edit-2-line"></i>
+        Register <i className="ri-edit-2-line"></i>
       </h1>
       <form
         onSubmit={handleSubmit}
@@ -88,10 +90,42 @@ const Register = () => {
 
         <button
           type="submit"
-          className="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className={`w-full py-3 text-white rounded-xl transition duration-300 focus:outline-none focus:ring-4 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-300"
+          }`}
+          disabled={loading} // Disable button when loading
         >
-          Register
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <svg
+                className="animate-spin mr-2 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+              Registering...
+            </div>
+          ) : (
+            "Register"
+          )}
         </button>
+
         <div className="mt-4 text-center">
           <span className="text-gray-700">Already a User?</span>{" "}
           <Link to="/login" className="text-blue-600 hover:underline">

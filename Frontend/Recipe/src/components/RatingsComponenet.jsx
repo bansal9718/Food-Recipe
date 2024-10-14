@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "remixicon/fonts/remixicon.css";
 
 const RatingsComponent = ({ initialRating, onRatingChange }) => {
   const [rating, setRating] = useState(initialRating || 0);

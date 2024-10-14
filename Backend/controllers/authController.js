@@ -65,6 +65,29 @@ const logout = async (req, res) => {
   });
 };
 
+const editUser = async (req, res) => {
+  const { username, email, password } = req.body;
+  const { id } = req.params;
+  if (!email || !password || !username) {
+    return res.status.json({ message: "Provide Details" });
+  }
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        username,
+        password,
+        email,
+      },
+      { new: true }
+    );
+
+    return res.status(201).json({ message: "Data updated Successfully", user });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: "Some error Occurred" });
+  }
+};
 const addFavorite = async (req, res) => {
   const { userId } = req.body; // Get userId from the request body
   const recipeId = req.params.id; // Get recipeId from the request params
@@ -173,6 +196,46 @@ const getFavorite = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
+  const { id } = req.params;
+
+  if (!oldPassword || !newPassword || !confirmNewPassword) {
+    return res.status(400).json({ message: "Please provide all details" });
+  }
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if old password is correct
+    const isPasswordCorrect = await user.comparePassword(oldPassword);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    // Check if new password and confirm password match
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: "New passwords do not match" });
+    }
+
+    // Update the password
+    user.password = newPassword;
+
+    await user.save();
+
+    return res.status(200).json({ message: "Password changed successfully" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Password change failed, please try again" });
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -181,4 +244,6 @@ module.exports = {
   removeFavorite,
   getUserById,
   logout,
+  editUser,
+  changePassword,
 };

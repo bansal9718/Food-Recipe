@@ -13,10 +13,13 @@ router
   .route("/recipe")
   .get(authenticateToken, recipeController.searchRecipeByName);
 
+router.route("/delete/:id").delete(recipeController.removeRecipe);
 router.route("/search").get(authenticateToken, recipeController.filterRecipe);
 
 router.route("/rating/:id").post(authenticateToken, recipeController.rating);
 
 router.route("/feedback").post(authenticateToken, recipeController.Suggestions);
+
+router.route("/edit/:id").put(recipeController.editRecipes);
 
 module.exports = router;

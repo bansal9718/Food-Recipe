@@ -5,16 +5,13 @@ const HomePage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-200 p-6">
       <h1 className="text-6xl font-sans font-semibold text-center text-gray-900 mb-8">
-        Recipe Finder  <i class="ri-restaurant-2-fill"></i>
+        Recipe Finder <i className="ri-restaurant-2-fill"></i>
       </h1>
       <p className="text-xl text-gray-600 mb-12 text-center max-w-lg">
         Discover and cook your favorite dishes from an extensive Collection of
         recipes. Deliciousness is just a tap away.
       </p>
       <div className="bg-white rounded-2xl shadow-md p-8 max-w-md w-full">
-        {/* <span className="block mb-4 text-gray-900 text-xl font-medium text-center">
-          New User?
-        </span> */}
         <Link to="/Register">
           <button className="w-full py-3 bg-blue-600 text-white text-lg rounded-xl hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-200 ">
             Register

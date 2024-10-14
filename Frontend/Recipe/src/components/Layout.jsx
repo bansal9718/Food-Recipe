@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom"; // This will render the child routes
 import Logout from "./Logout";
+import ProfileButton from "./ProfileButton";
 
 const Layout = () => {
   const token = localStorage.getItem("token");
@@ -13,7 +14,10 @@ const Layout = () => {
             <i className="ri-home-smile-fill"></i> My Recipe App
           </h1>
         </Link>
-        {token && <Logout />}
+        <div className="flex flex-row gap-8 mr-5 ">
+          {token && <ProfileButton />}
+          {token && <Logout />}
+        </div>
       </header>
       <main className="p-6">
         <Outlet />

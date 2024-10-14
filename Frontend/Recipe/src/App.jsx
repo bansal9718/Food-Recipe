@@ -11,19 +11,36 @@ import Logout from "./components/Logout";
 import Layout from "./components/Layout";
 import AddRecipe from "./components/AddRecipe";
 import UserRecipes from "./components/UserRecipes";
+import EditRecipes from "./components/EditRecipes";
+import MyProfile from "./components/MyProfile";
+import ChangePassword from "./components/ChangePassword";
+import DashboardLayout from "./components/DashBoardLayout";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/Dashboard" element={<DashBoard />} />
+          <Route
+            path="/Dashboard"
+            element={
+              <DashboardLayout>
+                <DashBoard />
+              </DashboardLayout>
+            }
+          />
           <Route path="/recipe/:id" element={<RecipeComponent />} />
           <Route path="/recipe" element={<RecipePage />} />
           <Route path="/favorites" element={<FavoriteRecipes />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/Add" element={<AddRecipe />} />
-          <Route path="/myRecipes" element={<UserRecipes />} />
+          <Route path="/myRecipes/:id" element={<UserRecipes />} />
+          <Route path="/edit/:id" element={<EditRecipes />} />
+          <Route path="/MyProfile/:id" element={<MyProfile />} />
+          <Route
+            path="/change-password/:id"
+            element={<ChangePassword />}
+          ></Route>
         </Route>
         <Route path="/Register" element={<Register />} />
         <Route path="/" element={<HomePage />} />

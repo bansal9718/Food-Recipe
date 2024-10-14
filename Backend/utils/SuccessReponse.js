@@ -12,7 +12,6 @@ class SuccessResponse {
       success: this.success,
       message: this.message,
       data: this.data,
-      
     });
   }
 }

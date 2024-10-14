@@ -11,8 +11,8 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://food-recipe-2-vi9a.onrender.com", // Replace with your client origin
-
+    origin: "https://food-recipe-2-vi9a.onrender.com", 
+    // origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
   })
@@ -25,6 +25,7 @@ app.use("/api/v1/food", recipeRoutes);
 //DB Connection
 connectDB();
 
+//Random Script to generate Random Data
 // randomData("sandwich", 5);
 
 const PORT = process.env.PORT || 4000;
@@ -32,6 +33,7 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
+
 
 //Global error handling middleware
 

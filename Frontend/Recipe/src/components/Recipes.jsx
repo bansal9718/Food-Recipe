@@ -1,69 +1,72 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "remixicon/fonts/remixicon.css";
+import leftArrow from "../../assets/arrow-left-s-line.png";
+import rightArrow from "../../assets/arrow-right-s-line.png";
 
 const Recipes = ({
   id,
   name,
   servings,
-  ingredients,
-  cookingTime,
   description,
   difficulty,
+  status,
   averageRating,
-  instructions,
   contributedBy,
-  suggestions,
 }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-8 mb-8 hover:shadow-2xl transform transition-transform duration-300 hover:scale-105 hover:bg-gray-50">
+    <div className="bg-white rounded-xl shadow-lg border border-gray-300 p-8 mb-8 mt-9 hover:shadow-2xl transform transition-transform duration-300 hover:scale-105 hover:bg-gray-50">
       <Link to={`/recipe/${id}`} className="block">
-        <h1 className="text-3xl font-extrabold text-gray-800 mb-4 hover:text-blue-600 transition-colors duration-300">
-          {name}
-        </h1>
-        <p className="text-lg text-gray-500 italic mb-6">{description}</p>
+        {/* Flexbox layout for arrows and name */}
+        <div className="flex items-center mb-4">
+          <img src={leftArrow} alt="Left Arrow" className="w-5 h-5 mr-2" />
+          <h1 className="text-2xl font-bold text-gray-800 hover:text-gray-600 transition-colors duration-300">
+            {name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}
+          </h1>
+          <img src={rightArrow} alt="Right Arrow" className="w-5 h-5 ml-2" />
+        </div>
 
-        <div className="grid grid-cols-2 gap-4 text-gray-700 mb-6">
+        <p className="text-lg text-gray-600 italic mb-4">{description}</p>
+
+        <div className="grid grid-cols-2 gap-4 text-lg text-gray-700 mb-4">
           <p className="col-span-1">
-            <span className="font-semibold">Average Rating:</span>
+            <span className="font-semibold text-gray-800">
+              Average Rating:{" "}
+            </span>
             {averageRating ? (
               <span className="text-yellow-500">
                 {averageRating.toFixed(1)} ★
               </span>
             ) : (
-              "Not rated yet"
+              <span className="text-red-500">Not rated yet</span>
             )}
           </p>
           <p className="col-span-1">
-            <span className="font-semibold">Servings:</span> {servings}
+            <span className="font-semibold text-gray-800">Servings:</span>{" "}
+            {servings}
           </p>
           <p className="col-span-1">
-            <span className="font-semibold">Cooking Time:</span> {cookingTime}{" "}
-            min
+            <span className="font-semibold text-gray-800">Status:</span>{" "}
+            {status ? status : "NA"}
           </p>
           <p className="col-span-1">
-            <span className="font-semibold">Difficulty:</span>
-            {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            <span className="font-semibold text-gray-800">Difficulty: </span>
+            <span
+              className={`font-medium ${
+                difficulty === "easy"
+                  ? "text-green-600"
+                  : difficulty === "medium"
+                  ? "text-orange-600"
+                  : "text-red-600"
+              }`}
+            >
+              {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+            </span>
           </p>
         </div>
 
-        <div className="mb-4">
-          <h3 className="text-xl font-bold text-gray-800 mb-3">Ingredients</h3>
-          <ul className="list-disc list-inside text-gray-600 space-y-1">
-            {ingredients.map((ingredient, index) => (
-              <li key={index} className="text-gray-700">
-                {ingredient}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-3">Instructions</h3>
-          <p className="col-span-1">{instructions}</p>
-        </div>
-        <p className="col-span-1">
-          <span className="font-semibold">Contributed By:</span> {contributedBy}
+        <p className="text-lg text-gray-800">
+          <span className="font-semibold text-gray-800">Contributed By:</span>{" "}
+          {contributedBy}
         </p>
       </Link>
     </div>

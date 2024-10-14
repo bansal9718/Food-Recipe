@@ -19,9 +19,15 @@ router
   .route("/:userId/recipes")
   .get(authenticateToken, recipeController.searchRecipesByUserId);
 
+router.route("/edit/:id").put(authenticateToken, authController.editUser);
+
 router
   .route("/removeFavorite/:id")
   .post(authenticateToken, authController.removeFavorite);
+
+router
+  .route("/changePassword/:id")
+  .put(authenticateToken, authController.changePassword);
 
 router.route("/logout").post(authenticateToken, authController.logout);
 module.exports = router;

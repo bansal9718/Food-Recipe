@@ -7,11 +7,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     const userData = {
       email,
@@ -23,16 +25,18 @@ const Login = () => {
       if (response.status === 200) {
         const token = response.data.token;
         localStorage.setItem("token", token);
+
         setSuccess("Logged in Successfully");
-        setTimeout(() => {
-          navigate("/Dashboard");
-        }, 2000);
+
+        navigate("/Dashboard");
       } else {
         setError("Invalid login credentials.");
       }
     } catch (error) {
       console.error("Login failed:", error);
       setError("An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,12 +77,42 @@ const Login = () => {
           required
           className="w-full px-4 py-3 mb-6 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 focus:outline-none"
         />
-
         <button
           type="submit"
-          className="w-full py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className={`w-full py-3 text-white rounded-xl transition duration-300 focus:outline-none focus:ring-4 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-300"
+          }`}
+          disabled={loading} // Disable button when loading
         >
-          Login
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <svg
+                className="animate-spin mr-2 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                ></path>
+              </svg>
+              Logging in...
+            </div>
+          ) : (
+            "Login"
+          )}
         </button>
 
         <div className="mt-4 text-center">

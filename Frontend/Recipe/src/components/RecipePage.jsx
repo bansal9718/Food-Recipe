@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Recipes from "./Recipes";
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "./axiosConfig";
+import icon from "../../assets/burger-icon.png";
 
 const RecipePage = () => {
   const location = useLocation();
@@ -55,9 +56,11 @@ const RecipePage = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold text-gray-900">Recipes</h1>
+    <div className="min-h-screen bg-gray-100 p-6 ">
+      <div className="flex justify-between items-center mb-9">
+        <h1 className="text-4xl font-semibold text-gray-900">
+          <img src={icon} alt="" className="w-10 h-10 inline" /> Explore Recipes
+        </h1>
         <button
           onClick={handleFavorites}
           className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600 transition duration-150"
@@ -69,10 +72,7 @@ const RecipePage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {recipes.length > 0 ? (
           recipes.map((rec) => (
-            <div
-              key={rec._id}
-              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition duration-200"
-            >
+            <div key={rec._id}>
               <Recipes
                 id={rec._id}
                 name={rec.name}

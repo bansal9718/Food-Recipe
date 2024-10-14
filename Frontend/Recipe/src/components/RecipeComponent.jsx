@@ -3,18 +3,28 @@ import axiosInstance from "./axiosConfig";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import MarkFavorite from "./MarkFavorite";
-import RatingsComponent from "./RatingsComponenet";
+import RatingsComponent from "./RatingsComponenet"; 
+import userIcon from "../../assets/user-fill.png";
+
+import {
+  FaClock,
+  FaUtensils,
+  FaStar,
+  FaComment,
+  FaClipboardList,
+} from "react-icons/fa";
 
 const RecipeComponent = () => {
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState("");
   const [user, setUser] = useState(null);
+  const [status, setStatus] = useState("");
   const [userId, setUserId] = useState(null);
   const [suggestion, setSuggestions] = useState("");
   const [success, setSuccess] = useState("");
   const [userRating, setUserRating] = useState(0);
   const [initialFavorite, setInitialFavorite] = useState(null);
-  const [addedBy, setAddedBy] = useState("Anonymous");
+  const [addedBy, setAddedBy] = useState("");
   const { id } = useParams();
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
@@ -30,16 +40,18 @@ const RecipeComponent = () => {
   useEffect(() => {
     const fetchRecipeAndFavorites = async () => {
       if (!id || !userId) return; // Check if id and decodedToken are valid
+
       try {
         const response = await axiosInstance.get(`/food/single/${id}`);
         setRecipe(response.data.recipe);
-
-        const getUserById = await axiosInstance.get(
-          `/user/get/${response.data.recipe.contributedBy}`
-        );
-
-        setAddedBy(getUserById.data.user.username);
-
+        if (response.data.recipe.contributedBy) {
+          const getUserById = await axiosInstance.get(
+            `/user/get/${response.data.recipe.contributedBy}`
+          );
+          setAddedBy(getUserById.data.user.username);
+        } else {
+          setAddedBy("Anonymous");
+        }
         const userResponse = await axiosInstance.get(`/user/get/${userId}`);
         setUser(userResponse.data.user);
 
@@ -104,20 +116,21 @@ const RecipeComponent = () => {
     <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
         <h1 className="text-4xl font-semibold text-gray-900">
-       * {recipe.name.charAt(0).toUpperCase() +
+          <FaClipboardList className="inline-block mr-2" />
+          {recipe.name.charAt(0).toUpperCase() +
             recipe.name.slice(1).toLowerCase()}
         </h1>
-        <h2 className="text-lg text-gray-700">
-          <i class="ri-user-fill"></i>{" "}
-          <span className="font-semibold"> {addedBy} (Contributor)</span>
-        </h2>
       </div>
 
       <h3 className="text-lg text-gray-600 mb-2">{recipe.description}</h3>
       <p className="text-gray-700 mb-4">
+        <FaUtensils className="inline-block mr-1" />
         Servings: <span className="font-medium">{recipe.servings}</span>
       </p>
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingredients</h3>
+
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        Ingredients:{" "}
+      </h3>
       <ul className="list-disc list-inside mb-4">
         {recipe.ingredients.map((ingredient, index) => (
           <li key={index} className="text-gray-700">
@@ -127,10 +140,12 @@ const RecipeComponent = () => {
       </ul>
 
       <div>
-        <h3 className="text-xl font-bold text-gray-800 mb-3">Instructions</h3>
+        <h3 className="text-xl font-bold text-gray-800 mb-3">Instructions: </h3>
         <p className="col-span-1 text-gray-700">{recipe.instructions}</p>
       </div>
+
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <FaClock className="inline-block mr-1" />
         Time Taken:{" "}
         <span className="font-medium">{recipe.cookingTime} min</span>
       </h3>
@@ -138,7 +153,10 @@ const RecipeComponent = () => {
         Level: <span className="font-medium">{recipe.difficulty}</span>
       </h3>
 
-      {/* Pass initialFavorite to MarkFavorite component */}
+      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        Status: {recipe.status}
+      </h3>
+
       <MarkFavorite initialFavorite={initialFavorite} recipeId={id} />
 
       <div className="mb-4">
@@ -146,16 +164,28 @@ const RecipeComponent = () => {
           initialRating={userRating}
           onRatingChange={handleRatingChange}
         />
-        <p className="text-gray-700">
-          Average Rating:{" "}
-          <span className="font-medium">
-            {recipe.averageRating.toFixed(1)} out of 5
-          </span>
-        </p>
+        <div className="flex flex-row items-center justify-between">
+          <p className="text-gray-700">
+            <FaStar className="inline-block mr-1" />
+            Average Rating:{" "}
+            <span className="font-medium">
+              {recipe.averageRating.toFixed(1)} out of 5
+            </span>
+          </p>
+          <h2 className="text-lg text-gray-700 flex items-center">
+            <img src={userIcon} alt="user" className="w-6 h-6 mr-2" />
+            <span className="font-semibold">
+              {addedBy ? addedBy : "Anonymous"} (contributor)
+            </span>
+          </h2>
+        </div>
       </div>
 
       <div className="border-t border-gray-300 pt-4 mt-6">
-        <h1 className="text-xl font-semibold mb-2">Provide Suggestions</h1>
+        <h1 className="text-xl font-semibold mb-2">
+          <FaComment className="inline-block mr-1" />
+          Provide Suggestions
+        </h1>
         <form onSubmit={handleSubmit}>
           <textarea
             name="suggestion"
@@ -168,7 +198,7 @@ const RecipeComponent = () => {
           ></textarea>
           <button
             type="submit"
-            className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 transition duration-300"
+            className="bg-blue-600 text-white rounded-md px-4 py-2 hover:bg-blue-700 transition duration-300 transform hover:scale-105"
           >
             Submit
           </button>

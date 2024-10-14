@@ -30,12 +30,11 @@ const newRecipe = async (req, res, next) => {
       throw new RecipeError("Provide all details for Recipe", 400);
     }
 
-    // Send the success response
     return new SuccessResponse("Recipe Created Successfully", recipe, 201).send(
       res
     );
   } catch (error) {
-    next(error); // Pass error to the error handler middleware
+    next(error);
   }
 };
 
@@ -48,14 +47,13 @@ const getAllRecipes = async (req, res, next) => {
       throw new RecipeError("No recipes found", 400);
     }
 
-    // Send the success response
     return new SuccessResponse(
       "Recipes fetched Successfully",
       { recipeCount, recipes },
       200
     ).send(res);
   } catch (error) {
-    next(error); // Pass error to the error handler middleware
+    next(error);
   }
 };
 
@@ -65,7 +63,7 @@ const searchRecipesByUserId = async (req, res) => {
   try {
     // Find recipes contributed by the specified user
     const recipes = await Recipe.find({ contributedBy: userId });
-   
+
     // Check if recipes were found
     if (recipes.length === 0) {
       return res.status(404).json({ message: "No recipes found" });
@@ -75,7 +73,6 @@ const searchRecipesByUserId = async (req, res) => {
     return res.status(200).json(recipes);
   } catch (error) {
     console.error(error);
-    // Return a 500 status code for server errors
     return res
       .status(500)
       .json({ message: "An error occurred while fetching recipes." });
@@ -96,7 +93,6 @@ const searchRecipeByName = async (req, res, next) => {
       throw new RecipeError("No Recipe found", 400);
     }
 
-    // Send the success response
     return new SuccessResponse(
       "Recipe fetched Successfully",
       recipe,
@@ -104,44 +100,63 @@ const searchRecipeByName = async (req, res, next) => {
       200
     ).send(res);
   } catch (error) {
-    next(error); // Pass error to the error handler middleware
+    next(error);
   }
 };
 
 const getRecipeById = async (req, res) => {
-  const { id } = req.params; // Correctly destructuring id from req.params
+  const { id } = req.params;
 
   if (!id) {
-    return res.status(400).json({ message: "Please provide an ID." }); // Corrected the status method
+    return res.status(400).json({ message: "Please provide an ID." });
   }
 
   try {
     const recipe = await Recipe.findById(id);
 
     if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found." }); // Added proper status for not found
+      return res.status(404).json({ message: "Recipe not found." });
     }
 
     return res
       .status(200)
-      .json({ message: "Recipe found successfully.", recipe }); // Sending a response with status and recipe
+      .json({ message: "Recipe found successfully.", recipe });
   } catch (error) {
     console.error(error); // Log the error for debugging
-    return res.status(500).json({ message: "Server error." }); // Handle server error
+    return res.status(500).json({ message: "Server error." });
+  }
+};
+
+const removeRecipe = async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(404).json({ message: "Please Provide Id" });
+  }
+  try {
+    const recipe = await Recipe.findByIdAndDelete(id);
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+    return res.status(200).json({ message: "Recipe Deleted Successfully" });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(400).json({ message: "Recipe Deletion Failed" });
   }
 };
 
 const filterRecipe = async (req, res) => {
   try {
-    const { name, servings, difficulty, cookingTime } = req.query;
+    const { name, servings, difficulty, cookingTime, status } = req.query;
 
     const matchStage = {};
 
-    // Filter by name if provided
     if (name) {
       matchStage.name = { $regex: new RegExp(name, "i") }; // Case-insensitive search
     }
-
+    if (status) {
+      matchStage.status = status;
+    }
     // Only filter by servings if provided
     if (servings) {
       matchStage.servings = { $gte: parseInt(servings) }; // Example: find servings greater than or equal to provided
@@ -194,7 +209,6 @@ const filterRecipe = async (req, res) => {
       },
     ]);
 
-    console.log(recipe);
     if (!recipe || recipe.length == 0) {
       return res.status(404).json({ message: "Recipe not found" });
     }
@@ -278,8 +292,41 @@ const Suggestions = async (req, res) => {
   // Save the recipe with the updated suggestions
   await recipe.save();
 
-  // Return a success response
   return res.status(200).json({ message: "Suggestion saved successfully." });
+};
+
+const editRecipes = async (req, res) => {
+  const { id } = req.params;
+  const { name, description, servings, difficulty, ingredients, instructions } =
+    req.body;
+
+  try {
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      {
+        name,
+        description,
+        servings,
+        difficulty,
+        ingredients,
+        instructions,
+      },
+      { new: true }
+    );
+
+    if (!updatedRecipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Recipe Edited Successfully", updatedRecipe });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(400)
+      .json({ message: "Recipe Editing Failed", error: error.message });
+  }
 };
 
 module.exports = {
@@ -291,4 +338,6 @@ module.exports = {
   Suggestions,
   getRecipeById,
   searchRecipesByUserId,
+  editRecipes,
+  removeRecipe,
 };

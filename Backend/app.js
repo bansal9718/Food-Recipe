@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://food-recipe-2-vi9a.onrender.com", 
+    origin: "https://food-recipe-2-vi9a.onrender.com",
     // origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Custom-Header"],
@@ -33,7 +33,6 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
-
 
 //Global error handling middleware
 

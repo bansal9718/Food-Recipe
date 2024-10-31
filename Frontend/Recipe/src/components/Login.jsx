@@ -34,7 +34,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("An error occurred during login. Please try again.");
+      setError("Email or Password is incorrect");
     } finally {
       setLoading(false);
     }

@@ -85,7 +85,7 @@ const RecipeDashboard = () => {
   };
 
   return (
-    <div className="flex flex-row min-h-screen bg-gradient-to-r from-green-200 to-blue-300">
+    <div className="flex flex-row min-h-screen bg-gradient-to-br from-green-300 via-blue-300 to-purple-400">
       <div className=" flex-grow p-8 bg-white shadow-lg rounded-lg">
         {showWelcome && username && (
           <h2 className="text-3xl text-gray-900 mb-4 animate-bounce text-center">

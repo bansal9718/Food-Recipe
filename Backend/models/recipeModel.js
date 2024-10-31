@@ -35,7 +35,7 @@ const recipeSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["veg", "non-veg"],
-      default: "NA",
+      default: "veg",
     },
 
     ratings: [

@@ -66,17 +66,17 @@ const logout = async (req, res) => {
 };
 
 const editUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email } = req.body;
   const { id } = req.params;
-  if (!email || !password || !username) {
-    return res.status.json({ message: "Provide Details" });
+  if (!email || !username) {
+    return res.status(404).json({ message: "Provide Details" });
   }
   try {
     const user = await User.findByIdAndUpdate(
       id,
       {
         username,
-        password,
+
         email,
       },
       { new: true }
